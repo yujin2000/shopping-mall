@@ -20,21 +20,15 @@ class ShoppingMall {
 
   // 쇼핑몰 시작
   bool showProducts(String? request) {
-    int req = 0;
     try {
-      req = int.parse(request!);
-    } catch (e) {
-      throw IncorrectInputExpcetion(null);
-    }
+      int req = int.parse(request!);
 
-    switch (req) {
-      case 1: // 상품 목록 출력
-        for (Product p in productsList) {
-          print('${p.name} / ${p.price}');
-        }
-      case 2: // 장바구니 담기
-        print('상품 이름을 입력해 주세요 !');
-        try {
+      switch (req) {
+        case 1: // 상품 목록 출력
+          showProdutsList();
+        case 2: // 장바구니 담기
+          print('상품 이름을 입력해 주세요 !');
+
           String? productName = stdin.readLineSync(encoding: Utf8Codec());
           int price = 0;
           late Product product;
@@ -65,30 +59,43 @@ class ShoppingMall {
           } else {
             throw IncorrectInputExpcetion('0개보다 많은 개수의 상품만 담을 수 있어요 !');
           }
-        } on FormatException {
-          throw IncorrectInputExpcetion(null);
-        }
-      case 3: // 장바구니에 담긴 상품들 확인
-        if (productsCart.isEmpty) {
-          print('장바구니에 담긴 상품이 없습니다.');
-        } else {
-          print(
-              '장바구니에 ${showProductNameList()}가 담겨있네요. 총 ${showTotal()}원 어치입니다!');
-        }
-      case 4: // 쇼핑몰 종료
-        print('정말 종료하시겠습니까? 종료를 원하신다면 [5] 를 눌러주세요.');
-        try {
-          var realExit = stdin.readLineSync();
-          if (int.parse(realExit!) == 5) {
-            return true;
+        case 3: // 장바구니에 담긴 상품들 확인
+          if (productsCart.isEmpty) {
+            print('장바구니에 담긴 상품이 없습니다.');
+          } else {
+            print(
+                '장바구니에 ${showProductsCartList()}가 담겨있네요. 총 ${showTotal()}원 어치입니다!');
           }
-        } catch (e) {
-          throw IncorrectInputExpcetion('종료하지 않습니다.');
-        }
-      case 6: // 장바구니 초기화
-        initCart();
-      default:
-        throw IncorrectInputExpcetion('지원하지 않는 기능입니다 ! 다시 시도해 주세요 ..');
+        case 4: // 쇼핑몰 종료
+          print('정말 종료하시겠습니까? 종료를 원하신다면 [5] 를 눌러주세요.');
+          try {
+            var realExit = stdin.readLineSync();
+            if (int.parse(realExit!) == 5) {
+              return true;
+            }
+          } catch (e) {
+            throw IncorrectInputExpcetion('종료하지 않습니다.');
+          }
+        case 6: // 장바구니 초기화
+          initCart();
+        case 7: // 상품 등록
+          print('원하는 상품 명을 입력하세요.');
+          var wanted = stdin.readLineSync(encoding: utf8);
+          print('상품의 가격을 지정해주세요.');
+          var wantedPrice = stdin.readLineSync();
+          addProductsList(wanted!, int.parse(wantedPrice!));
+        case 8: // 상품 삭제
+          print('삭제를 원하시는 상품 명을 입력하세요.');
+          showProdutsList();
+          var wanted = stdin.readLineSync();
+          deleteProduct(wanted!);
+        default:
+          throw IncorrectInputExpcetion('지원하지 않는 기능입니다 ! 다시 시도해 주세요 ..');
+      }
+    } on FormatException {
+      throw IncorrectInputExpcetion(null);
+    } catch (e) {
+      throw e;
     }
     return false;
   }
@@ -115,7 +122,7 @@ class ShoppingMall {
   }
 
   // 장바구니에 담겨있는 상품들의 이름
-  String showProductNameList() {
+  String showProductsCartList() {
     return productsCart.keys.map((e) => e.name).join(', ');
   }
 
@@ -126,6 +133,37 @@ class ShoppingMall {
     } else {
       productsCart.clear();
       print('장바구니를 초기화합니다.');
+    }
+  }
+
+  // 상품 목록 출력
+  void showProdutsList() {
+    for (Product p in productsList) {
+      print('${p.name} / ${p.price}');
+    }
+  }
+
+  // 상품 등록하기
+  void addProductsList(String product, int price) {
+    productsList.add(Product(product, price));
+    print('[${product}]상품이 등록되었습니다.');
+  }
+
+  // 상품 삭제하기
+  void deleteProduct(String productName) {
+    Product? p = null;
+    // 삭제를 원하는 상품 이름과 비교하여 Product 객체 할당
+    productsList.forEach((element) {
+      if (element.name == productName) {
+        p = element;
+      }
+    });
+    if (p == null) {
+      throw IncorrectInputExpcetion(
+          '$productName 은/는 상품 등록이 되어 있지 않아 삭제할 수 없습니다.');
+    } else {
+      productsList.remove(p);
+      print('$productName 은/는 상품 목록에서 삭제되었습니다.');
     }
   }
 }
