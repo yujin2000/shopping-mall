@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'exception.dart';
 import 'shopping-mall.dart';
 
 void main() {
@@ -15,7 +16,11 @@ void main() {
     print(
         '------------------------------------------------------------------------------------------------------');
     String? request = stdin.readLineSync();
-    exit = mall.showProducts(request);
+    try {
+      exit = mall.showProducts(request);
+    } on IncorrectInputExpcetion catch (e) {
+      print(e.message == null ? '입력값이 올바르지 않아요 !' : e.message);
+    }
   }
   print('이용해 주셔서 감사합니다 ~ 안녕히 가세요 !');
 }
