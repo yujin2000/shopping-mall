@@ -140,6 +140,12 @@ class ShoppingMall {
 
   // 상품 목록 출력
   void showProdutsList() {
+    // 상품이 없을 경우 없다는 문구 추가
+    if (productsList.isEmpty) {
+      print('상품 목록이 남아있지 않습니다.');
+      return;
+    }
+
     for (Product p in productsList) {
       print('${p.name} / ${p.price}');
     }
