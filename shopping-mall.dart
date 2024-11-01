@@ -89,6 +89,8 @@ class ShoppingMall {
           showProdutsList();
           var wanted = stdin.readLineSync();
           deleteProduct(wanted!);
+        case 9: // 상품 가격 변경
+          updatePrice();
         default:
           throw IncorrectInputExpcetion('지원하지 않는 기능입니다 ! 다시 시도해 주세요 ..');
       }
@@ -164,6 +166,33 @@ class ShoppingMall {
     } else {
       productsList.remove(p);
       print('$productName 은/는 상품 목록에서 삭제되었습니다.');
+    }
+  }
+
+  // 상품 가격 변경하기
+  void updatePrice() {
+    print('가격 변경을 원하시는 상품 명을 입력하세요.');
+    showProdutsList();
+    try {
+      var wanted = stdin.readLineSync();
+      // 입력받은 값이 productsList 에 존재하는지 체크
+      bool existProduct = false;
+
+      productsList.forEach((element) {
+        // productsList 에서 이름과 비교
+        if (element.name == wanted!) {
+          print('가격을 측정해주세요.');
+          var newPrice = stdin.readLineSync();
+          element.price = int.parse(newPrice!);
+          existProduct = true;
+        }
+      });
+      // 존재하지 않는 경우
+      if (!existProduct) {
+        throw IncorrectInputExpcetion('$wanted 는 존재하지 않습니다.');
+      }
+    } on FormatException {
+      throw IncorrectInputExpcetion(null);
     }
   }
 }
